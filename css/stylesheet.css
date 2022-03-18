@@ -30,6 +30,8 @@ body {
     font-family: sans-serif;
     padding-left: 12.5%;
     padding-right: 12.5%;
+    margin: 0px auto 0px;
+    max-width: 1080px;
 }
 
 a:link {
@@ -50,9 +52,22 @@ a:active {
 
 
 .post-title {
-    text-align: center;
+    text-align: left;
     font-size: var(--post-title-font-size);
     color: #f54e25;
+    margin: 32px 0px 8px;
+}
+
+.post-time {
+    text-align: left;
+    color: var(--quote-color);
+    margin: 8px 0px;
+}
+
+.post-tags {
+    text-align: left;
+    color: var(--quote-color);
+    margin: 8px 0px;
 }
 
 .post-heading {
@@ -64,11 +79,12 @@ a:active {
 }
 
 .figure {
-    margin: var(--content-vertical-margin) 0px;
+    margin: var(--content-vertical-margin) auto;
     padding: 8px 8px;
     text-align: center;
     box-shadow: 2px 2px 8px #000000;
     border: 1px solid var(--table-border-color);
+    max-width: 1200px;
 }
 
 .figure-img {
@@ -193,10 +209,12 @@ blockquote {
 }
 
 ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 4px;
+    height: 4px;
 }
 
-::-webkit-scrollbar-track {
-    border-radius: 10px;
+::-webkit-scrollbar-thumb {
+    width: 4px;
+    background: #fac73a;
+    border-radius: 1px;
 }
