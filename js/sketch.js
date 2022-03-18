@@ -1,8 +1,8 @@
-let x = 62;
+let x = 50;
 let y = 0;
 let vx = 0;
 let vy = 24;
-const CANVAS_WIDTH = 125;
+const CANVAS_WIDTH = 100;
 
 let angles;
 let prob = 0.23;
@@ -110,5 +110,5 @@ function positionCanvas(cnv, x, y) {
 }
 
 function windowResized() {
-    resizeCanvas(CANVAS_WIDTH, document.documentElement.scrollHeight, true);
+    //resizeCanvas(CANVAS_WIDTH, document.documentElement.scrollHeight, true);
 }
