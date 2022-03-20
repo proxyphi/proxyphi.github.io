@@ -1,0 +1,95 @@
+<head>
+    <link rel="stylesheet" href="../../css/stylesheet.css">
+
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script src="../../components/SiteHeader.js" type="text/javascript" defer></script>
+    <script src="../../components/PostHeader.js" type="text/javascript" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
+    <script src="../../js/sketch.js"></script>
+</head>
+
+
+<body>
+    <site-header></site-header>
+    
+    <post-header 
+        title="CLIP Guided Evolution for Generating 3D Scenes" 
+        date="March 20, 2022">
+    </post-header>
+
+    <div style="display: flex; width: 80%; column-gap: 2em; row-gap: 1em; flex-wrap: wrap;">
+        <a href="https://github.com/proxyphi/es-clip-threed">GitHub</a>
+        <a href="">Colab Notebook</a>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
+        <div>
+            <img src="/assets/projects/es-clip-threed/output-red-mushroom.gif">
+            <img src="/assets/projects/es-clip-threed/output-rotating-red-mushroom.gif">
+            <p style="font-size: 14px; text-align: center;"><i>"red mushroom in between two trees"</i></p>
+        </div>
+        
+        <div>
+            <img src="/assets/projects/es-clip-threed/output-a-blue-stool.gif">
+            <img src="/assets/projects/es-clip-threed/output-rotating-a-blue-stool.gif">
+            <p style="font-size: 14px; text-align: center;"><i>"a blue stool"</i></p>
+        </div>
+
+        <div>
+            <img src="/assets/projects/es-clip-threed/output-cute-white-rabbit.gif">
+            <img src="/assets/projects/es-clip-threed/output-rotating-cute-white-rabbit.gif">
+            <p style="font-size: 14px; text-align: center;"><i>"a cute white rabbit"</i></p>
+        </div>
+
+        <div>
+            <img src="/assets/projects/es-clip-threed/output-rubberduck.gif">
+            <img src="/assets/projects/es-clip-threed/output-rotating-rubberduck.gif">
+            <p style="font-size: 14px; text-align: center;"><i>"a picture of a rubber duck"</i></p>
+        </div>
+    </div>
+
+    <h1 class="post-heading">Intro</h1>
+    <p>
+        The aim of this project is to generate simple 3D scenes using only text prompts fed into OpenAI's CLIP
+        model, which is responsible for guiding how multiple standard 3D primitives should be arranged 
+        and colored within a scene based on the similarity to the text prompt.
+    </p>
+    <p>
+        The basic idea can just be considered an extension of 
+        <a href="https://es-clip.github.io/"> 
+            Modern Evolution Strategies for Creativity: Fitting Concrete Images and Abstract Concepts
+        </a>
+        to three dimensions. In a similar light, there should be no expectation of being able to extract particularly 
+        accurate 3D models in a short amount of time out of this method, and as such can just be considered a proof of concept.
+    </p>
+    <p>
+        I worked on this in part because I wanted to explore Evolutionary Strategies as a technique, but
+        also due to a lack of access to more powerful compute resources (I am running all this locally with a GTX 1070ti).
+        This was one of the few methods that could allow me to get subjectively interesting results in a reasonable amount of time
+        (an average run on my machine takes about 30-50 minutes), as opposed to having to train some kind of differentiable 
+        renderer from scratch.
+    </p>
+
+    <h1 class="post-heading">Implementation Details</h1>
+
+    <h1 class="post-heading">Results</h1>
+
+
+    <div class="divider"></div>
+    <h1 class="post-heading">Reference</h1>
+</body>

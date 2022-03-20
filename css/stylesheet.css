@@ -104,7 +104,7 @@ a:active {
 p {
     text-align: justify;
     line-height: 1.6em;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 blockquote {
@@ -206,6 +206,38 @@ blockquote {
 .full-img {
     width: 50%;
     height: 50%;
+}
+
+
+div.project-container {
+
+}
+
+div.project-container div:nth-child(even) {
+    margin-left: 5%;
+    border-left: 32px solid var(--nav-link-color);
+}
+
+.project-card {
+    position: relative;
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--table-border-color);
+    box-shadow: 4px 4px 12px #000000;
+    margin-bottom: 32px;
+    padding: 8px 16px 8px;
+}
+
+.project-card img {
+    width: 256px;
+    height: 256px;
+}
+
+.divider {
+    margin: 32px auto 16px;
+    border-top: 1px solid #333333;
 }
 
 ::-webkit-scrollbar {
