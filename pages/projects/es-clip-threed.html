@@ -27,45 +27,50 @@
     
     <post-header 
         title="CLIP Guided Evolution for Generating 3D Scenes" 
-        date="March 20, 2022">
+        date="March 22, 2022">
     </post-header>
 
     <div style="display: flex; width: 80%; column-gap: 2em; row-gap: 1em; flex-wrap: wrap;">
         <a href="https://github.com/proxyphi/es-clip-threed">GitHub</a>
         <a href="">Colab Notebook</a>
+        <a href="/assets/projects/es-clip-threed/ES-clip-threed-raw-diary.rtf">Development Diary (raw)</a>
     </div>
 
     <div class="divider"></div>
+
 
     <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
         <div>
             <img src="/assets/projects/es-clip-threed/output-red-mushroom.gif">
             <img src="/assets/projects/es-clip-threed/output-rotating-red-mushroom.gif">
-            <p style="font-size: 14px; text-align: center;"><i>"red mushroom in between two trees"</i></p>
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center;"><i>"red mushroom in between two trees"</i></p>
         </div>
         
         <div>
             <img src="/assets/projects/es-clip-threed/output-a-blue-stool.gif">
             <img src="/assets/projects/es-clip-threed/output-rotating-a-blue-stool.gif">
-            <p style="font-size: 14px; text-align: center;"><i>"a blue stool"</i></p>
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center;"><i>"a blue stool"</i></p>
         </div>
 
         <div>
             <img src="/assets/projects/es-clip-threed/output-cute-white-rabbit.gif">
             <img src="/assets/projects/es-clip-threed/output-rotating-cute-white-rabbit.gif">
-            <p style="font-size: 14px; text-align: center;"><i>"a cute white rabbit"</i></p>
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center;"><i>"a cute white rabbit"</i></p>
         </div>
 
         <div>
             <img src="/assets/projects/es-clip-threed/output-rubberduck.gif">
             <img src="/assets/projects/es-clip-threed/output-rotating-rubberduck.gif">
-            <p style="font-size: 14px; text-align: center;"><i>"a picture of a rubber duck"</i></p>
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center;"><i>"a picture of a rubber duck"</i></p>
         </div>
     </div>
 
+    <!-- Intro Section -->
+    <div id="intro">
     <h1 class="post-heading">Intro</h1>
     <p>
-        The aim of this project is to generate simple 3D scenes using only text prompts fed into OpenAI's CLIP
+        The aim of this project is to generate simple 3D scenes using only text prompts fed into OpenAI's 
+        <a href="https://openai.com/blog/clip/">CLIP</a>
         model, which is responsible for guiding how multiple standard 3D primitives should be arranged 
         and colored within a scene based on the similarity to the text prompt.
     </p>
@@ -90,11 +95,20 @@
     <p>
         In other words: don't expect too much rigor in this! It's for fun and curiosity's sake.
     </p>
+    </div>
 
     <div class="divider"></div>
 
+    <!-- Implementation details section -->
+    <div id="implementation">
     <h1 class="post-heading">Implementation Details</h1>
-    <img src="/assets/projects/es-clip-threed/architecture.png" width="100%" />
+    <div>
+        <img src="/assets/projects/es-clip-threed/architecture.png" width="100%" />
+        <p style="color: var(--quote-color); font-size: 14px; text-align: center;">
+            [Figure 1] Overall system architecture. PGPE graphic taken from its 
+            <a href="https://github.com/nnaisense/pgpelib/blob/release/images/distevo.gif">repo.</a>
+        </p>
+    </div>
 
     <h2 class="post-subheading">Overview</h2>
     <p>
@@ -178,7 +192,7 @@
 
         <div style="margin: 0 auto; text-align: center; width: 40%">
             <img src="/assets/projects/es-clip-threed/frame_0001.jpg" width="256" height="256">
-            <p style="font-size: 14px; text-align: center; width: 100%; height: 24px;">Example of scene on initialization.</p>
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center; width: 100%; height: 24px;">Example of scene on initialization.</p>
         </div>
     </div>
 
@@ -196,13 +210,13 @@
         <div>
             <img src="/assets/projects/es-clip-threed/rotation-example-4.gif" width="256" height="256">
             <img src="/assets/projects/es-clip-threed/rotation-example-8.gif" width="256" height="256">
-            <p style="font-size: 14px; text-align: center; width: 512px; height: 64px;"><i>[Figure 2]</i> Left: 4 angles. Right: 8 angles.</p>
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center; width: 512px; height: 64px;"><i>[Figure 2]</i> Left: 4 angles. Right: 8 angles.</p>
         </div>
         
         <div>
             <img src="/assets/projects/es-clip-threed/elephant.jpg">
             <img src="/assets/projects/es-clip-threed/elephant2.jpg">
-            <p style="font-size: 14px; text-align: center; width: 512px; height: 64px;">
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center; width: 512px; height: 64px;">
             <i>[Figure 3]</i> "a picture of an elephant" run with 4 render angles. Notice the presence of multiple "trunks" when viewed from 
             a different angle (right), as opposed to when viewed from the front (left). It turns out there's one "trunk" per angle in this run!
             </p>
@@ -212,10 +226,17 @@
     <p>
         The renderer is, more precisely, multiple
         <a href="http://www.open3d.org/docs/release/tutorial/visualization/customized_visualization.html">
-            customized Open3D rendererers
-        </a>  running in the background, which performs renderings of all solutions in parallel. 
+            customized Open3D renderers
+        </a> running in the background, which performs renderings of all solutions in parallel. 
         Since the $popsize$ solutions are all independent of each other, it's possible to scale this up as much as needed. 
         In my implementation, one renderer is initialized per CPU core.
+    </p>
+
+    <p>
+        The renderer implementation currently supports changing the background color of the scene to one of four predefined colors. It also
+        allows for adjusting bounds on used parameters, such as constraining scales to be within some 
+        $[scale_{min}, scale_{max}]$, or multiplying each of the coordinates by a coordinate scale 
+        $(x, y, z) := (x, y, z) * scale_{coordinate}$.
     </p>
 
     <h2 class="post-subheading">CLIP-Guided Loss</h2>
@@ -256,23 +277,155 @@
         <div>
             <img src="/assets/projects/es-clip-threed/pyramid-o3d.jpg" width="256" height="256">
             <img src="/assets/projects/es-clip-threed/pyramid-blender.jpg" width="256" height="256">
-            <p style="font-size: 14px; text-align: center; width: 512px; height: 64px;">
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center; width: 512px; height: 64px;">
                 <i>[Figure 4]</i> "an ancient aztec pyramid" as viewed in Open3D (left), and Blender (right).
             </p>
         </div>
         <div>
             <img src="/assets/projects/es-clip-threed/defaultvo3d.png" width="512" height="256">
-            <p style="font-size: 14px; text-align: center; width: 512px; height: 64px;">
+            <p style="color: var(--quote-color); font-size: 14px; text-align: center; width: 512px; height: 64px;">
                 <i>[Figure 5]</i> Default Blender cube (left) vs Default .obj Open3D cube (right). Normal information showed as pink lines.
             </p>
         </div>
     </div>
+    </div>
 
     <div class="divider"></div>
 
+    <!-- Results Section -->
+    <div id="results">
     <h1 class="post-heading">Results</h1>
+    <p>
+        The results showed below are hand-picked from many runs. A couple of "failure" cases are included.
+        Most runs were performed for 800 iterations, with some at 1000 or 1400. As noted before, convergence 
+        tends to happen around the 600-800 mark. This is noticable in the progress animations as the model tends 
+        to stabilize towards the end of each (one frame is taken per 20 iterations for reference).
+    </p>
 
+    <p>
+        If you haven't noticed already, all results shown do <i>not</i> enable rotations as an optimization
+        parameter, along with boxes being used consistently. Again, this is mostly due to a lack of computational budget
+        and time to really explore this behavior. One example of rotations being enabled is shown for 
+        reference.
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Prompt</th>
+                <th>Result - Progress</th>
+                <th>Result - Final</th>
+            </tr>
+        </thead>
+    
+        <tbody>
+            <tr>
+                <td>"an ancient aztec pyramid"</td>
+                <td><img src="/assets/projects/es-clip-threed/output-aztec-pyramid.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-aztec-pyramid.gif"></td>
+            </tr>
+            <tr>
+                <td>"a picture of the eiffel tower in paris, france"</td>
+                <td><img src="/assets/projects/es-clip-threed/output-eiffel.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-eiffel.gif"></td>
+            </tr>
+            <tr>
+                <td>"a city next to mountains"</td>
+                <td><img src="/assets/projects/es-clip-threed/output-citymountains.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-citymountains.gif"></td>
+            </tr>
+            <tr>
+                <td>"a city skyline at night"</td>
+                <td><img src="/assets/projects/es-clip-threed/output-citynight.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-citynight.gif"></td>
+            </tr>
+            <tr>
+                <td>"A street lamp made of boxes"</td>
+                <td><img src="/assets/projects/es-clip-threed/output-streetlampboxes.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-streetlampboxes.gif"></td>
+            </tr>
+            <tr>
+                <td>"a cow in minecraft"</td>
+                <td><img src="/assets/projects/es-clip-threed/output-cow.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-cow.gif"></td>
+            </tr>
+            <tr>
+                <td>"a green chair"</td>
+                <td><img src="/assets/projects/es-clip-threed/output-greenchair.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-greenchair.gif"></td>
+            </tr>
+            <tr>
+                <td>"a pig in minecraft" <i>(rotations enabled)</i></td>
+                <td><img src="/assets/projects/es-clip-threed/output-pigrot.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-pigrot.gif"></td>
+            </tr>
+            <tr>
+                <td>"a pig in minecraft" <i>(exact same as above, without rotations)</i></td>
+                <td><img src="/assets/projects/es-clip-threed/output-pig.gif"></td>
+                <td><img src="/assets/projects/es-clip-threed/output-rotating-pig.gif"></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
 
     <div class="divider"></div>
+
+    <!-- Reference Section -->
+    <div id="reference">
     <h1 class="post-heading">Reference</h1>
+    <ol>
+        <li>
+            <p>
+                <a href="https://arxiv.org/abs/2109.08857"> 
+                    Modern Evolution Strategies for Creativity: Fitting Concrete Images and Abstract Concepts
+                </a>
+            </p>
+        </li>
+
+        <li>
+            <p>
+                <a href="https://arxiv.org/abs/2008.02387"> 
+                    ClipUp: A Simple and Powerful Optimizer for Distribution-based Policy Evolution
+                </a>
+            </p>
+        </li>
+
+        <li>
+            <p>
+                <a href="https://arxiv.org/pdf/2103.00020.pdf"> 
+                    Learning Transferable Visual Models From Natural Language Supervision
+                </a>
+            </p>
+        </li>
+
+        <li>
+            <p>
+                The 
+                <a href="https://github.com/crowsonkb/v-diffusion-pytorch"> 
+                    v-diffusion-pytorch repo
+                </a> for
+                implementation of great circle distance loss and another source of inspiration while 
+                working on this.
+            </p>
+        </li>
+
+        <li>
+            <p>
+                <a href="http://www.open3d.org/">
+                    Open3D
+                </a>
+            </p>
+        </li>
+
+        <li>
+            <p>
+                The website of <a href="http://paulbourke.net/dataformats/">Paul Bourke</a> for great
+                writeups on 3D data formats, specifically the
+                <a href="http://paulbourke.net/dataformats/obj">OBJ</a>
+                and 
+                <a href="http://paulbourke.net/dataformats/mtl">MTL</a> file formats.            
+            </p>
+        </li>
+    </ol>
+    </div>
 </body>
