@@ -1,4 +1,4 @@
-<head>
+<head xmlns="http://www.w3.org/2000/svg">
     <link rel="stylesheet" href="../../css/stylesheet.css">
 
     <script>
@@ -79,13 +79,196 @@
     </p>
     <p>
         I worked on this in part because I wanted to explore Evolutionary Strategies as a technique, but
-        also due to a lack of access to more powerful compute resources (I am running all this locally with a GTX 1070ti).
-        This was one of the few methods that could allow me to get subjectively interesting results in a reasonable amount of time
+        also due to a lack of access to more powerful compute resources (I am running this locally with a GTX 1070ti).
+        This method allows me to get subjectively compelling results in a reasonable amount of time
         (an average run on my machine takes about 30-50 minutes), as opposed to having to train some kind of differentiable 
-        renderer from scratch.
+        renderer from scratch. For the same reason however, this also means that my ability to explore and iterate on
+        this method quickly is still somewhat limited — I can only really do about 48 full runs per day if I completely
+        automate the process, and find that a majority of those tend to be "failure cases."  
     </p>
 
+    <p>
+        In other words: don't expect too much rigor in this! It's for fun and curiosity's sake.
+    </p>
+
+    <div class="divider"></div>
+
     <h1 class="post-heading">Implementation Details</h1>
+    <img src="/assets/projects/es-clip-threed/architecture.png" width="100%" />
+
+    <h2 class="post-subheading">Overview</h2>
+    <p>
+        The basic algorithm is as follows:
+    </p>
+    <ol>
+        <li>
+            <p>
+                An input prompt supplied by the user gets encoded by a CLIP ViT/B-16 model, which is used in evaluating the fitness of generated
+                scenes via a simple distance-based measure.
+            </p>
+        </li>
+        <li>
+            <p>
+                A <a href="https://github.com/nnaisense/pgpelib">PGPElib</a> solver with the ClipUp optimizer is initialized
+                with a $popsize$, which represents the number of solutions which will be generated.
+            </p>
+        </li>
+        <li>
+            <p>
+                The solver is asked for candidate solutions which takes the form of a $popsize \times N \times 12$ matrix and represents each 
+                solution's $N$ primitives and their respective parameters.
+            </p>
+        </li>
+        <li>
+            <p>
+                The solutions are passed into an Open3D renderer running in the background, which performs renderings of 
+                all solutions based on parameters.
+            </p>
+        </li>
+        <li>
+            <p>
+                Renders are resized and normalized.
+            </p>
+        </li>
+        <li>
+            <p>
+                Renders are encoded by CLIP and then compared with the encoded input prompt by means of a distance-based comparison
+                function (cosine similarity by default). Fitness is calculated and modified slightly by a weighted cluster distance term.
+            </p>
+        </li>
+        <li>
+            <p>
+                Solver is told fitnesses, which then updates solution center.
+            </p>
+        </li>
+        <li>
+            <p>
+                Steps 3-7 are repeated for $n_{iterations}$.
+            </p>
+        </li>
+        <li>
+            <p>
+                Best solution is selected for final rendering and exporting.
+            </p>
+        </li>
+    </ol>
+
+
+    <h2 class="post-subheading">Rendering Details</h2>
+    <p>
+        All rendering is done in <a href="http://www.open3d.org/">Open3D</a>. First, a set of $N$ primitives are
+        initialized. These can be all one type of primitive (boxes, spheres, cylinders, etc.) or randomly initialized.
+        <a href="https://github.com/proxyphi/es-clip-threed/blob/main/renderer.py">renderer.py</a> 
+        has all supported implementations, though in most experiments I found that using only boxes (with `BoxRenderer`)
+        led to the best performance.
+
+        Each primitive has a set of 9 randomly-initialized parameters which can be optimized, along with an
+        additional 3 parameters which can be toggled to control the rotation of each primitive. These parameters (including rotation) are:
+    </p>
+    <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
+        <div style="width: 60%">
+        <ul>
+            <li>$x$, $y$, $z$ coordinates</li>
+            <li>$R_x, R_y, R_z$ Euler rotation angles</li>
+            <li>$Scale_x,  Scale_y, Scale_z$ where $1.0, 1.0, 1.0$ should represent an unscaled object relative to its center, and 
+                something like $0.5, 0.5, 0.5$ should represent the object scaled down to half of its unscaled size. </li>
+            <li>$r$, $g$, $b$ colors.</li>
+        </ul>
+        </div>
+
+        <div style="margin: 0 auto; text-align: center; width: 40%">
+            <img src="/assets/projects/es-clip-threed/frame_0001.jpg" width="256" height="256">
+            <p style="font-size: 14px; text-align: center; width: 100%; height: 24px;">Example of scene on initialization.</p>
+        </div>
+    </div>
+
+    <p>
+        The renderer arranges the $N$ primitives in the scene according to their respective 12 parameters. The renderer then takes
+        multiple images of the scene at different angles before sending these to CLIP for encoding. This is necessary since we want to ensure
+        that the scene looks viable from multiple viewpoints as opposed to overfitting to a single viewpoint. In practice I ended up typically
+        using 4 evenly spaced angles orbiting around the scene's Y-axis (see Figure 2 for reference).  The number of angles is adjustable, but at the cost of 
+        additional computational load when CLIP encodes each image; 4 provided a good tradeoff in producing compelling results for several
+        cases while still completing in a reasonable amount of time.  However, I actually suspect that the optimal number is between 5 and 9, as
+        lower numbers tend to produce symmetry artifacts along their respective viewpoints (Figure 3).
+    </p>
+
+    <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
+        <div>
+            <img src="/assets/projects/es-clip-threed/rotation-example-4.gif" width="256" height="256">
+            <img src="/assets/projects/es-clip-threed/rotation-example-8.gif" width="256" height="256">
+            <p style="font-size: 14px; text-align: center; width: 512px; height: 64px;"><i>[Figure 2]</i> Left: 4 angles. Right: 8 angles.</p>
+        </div>
+        
+        <div>
+            <img src="/assets/projects/es-clip-threed/elephant.jpg">
+            <img src="/assets/projects/es-clip-threed/elephant2.jpg">
+            <p style="font-size: 14px; text-align: center; width: 512px; height: 64px;">
+            <i>[Figure 3]</i> "a picture of an elephant" run with 4 render angles. Notice the presence of multiple "trunks" when viewed from 
+            a different angle (right), as opposed to when viewed from the front (left). It turns out there's one "trunk" per angle in this run!
+            </p>
+        </div>
+    </div>
+
+    <p>
+        The renderer is, more precisely, multiple
+        <a href="http://www.open3d.org/docs/release/tutorial/visualization/customized_visualization.html">
+            customized Open3D rendererers
+        </a>  running in the background, which performs renderings of all solutions in parallel. 
+        Since the $popsize$ solutions are all independent of each other, it's possible to scale this up as much as needed. 
+        In my implementation, one renderer is initialized per CPU core.
+    </p>
+
+    <h2 class="post-subheading">CLIP-Guided Loss</h2>
+    <p>
+        Once all renders of the proposed solutions from PGPE are complete, they are augmented and then passed into CLIP for encoding work.
+        In other works leveraging CLIP for generative art, a number of random resized crops are performed as part of the augmentation process
+        in order to prevent overfitting. I've found (subjectively, of course) that this implementation is particularly sensitive to 
+        this augmentation method and opted against using it, but mostly out of a lack of time (hardware) to really explore it further. 
+        Besides, using renders from multiple angles seems to be a more context-appropriate method of regularizing the output anyway.
+    </p>
+
+    <p>
+        The encoded images are then compared with the CLIP-encoded prompt to finally produce a per-solution fitness which can be handed to the
+        optimizer. The fitnesses can just be a simple cosine similarity or another distance-based measure (several implementations
+        of generative art leveraging CLIP use a <i>great circle distance loss</i>, a practice which seems to have originated in the work of 
+        <a href="https://colab.research.google.com/drive/1ED6_MYVXTApBHzQObUPaaMolgf9hZOOF">Katherine Crowson</a> which I've included
+        as well), though in testing I have found no noticable difference between the ones I've implemented.
+    </p>
+    <p>
+        One additional thing I've found to improve output quality is to add a weighted penalty term to the fitness which 
+        represents the distance between the cluster-center of all primitives and the center of the scene:
+        $$  fitness = fitness - \lambda_{distance} * \lVert(center_{cluster} - center_{scene})\rVert $$
+        This distance will be minimized
+        so as to avoid primitives from clustering away from the origin point, which surprisingly was a pretty common behavior! I don't have
+        a good explanation as to why this was the case unfortunately.
+    </p>
+
+    <h2 class="post-subheading">Output</h2>
+    <p>
+        The evolutionary loop as described above repeats for an arbitrary number of iterations. Convergence seems to happen around the 600-800 iteration
+        mark in many of my runs. Upon completion, the program will write out a rotating preview .gif of the scene and a .obj file with corresponding .mtl
+        material information (which is really just color info). There are some issues with Open3D's mesh exporting capabilities, but mainly the fact that
+        normals aren't entirely written out properly. The lighting and shading model used is also relatively basic, so when combined with this issue,
+        there are notable visual differences when viewing in Open3D versus another 3D renderer.
+    </p>
+
+    <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
+        <div>
+            <img src="/assets/projects/es-clip-threed/pyramid-o3d.jpg" width="256" height="256">
+            <img src="/assets/projects/es-clip-threed/pyramid-blender.jpg" width="256" height="256">
+            <p style="font-size: 14px; text-align: center; width: 512px; height: 64px;">
+                <i>[Figure 4]</i> "an ancient aztec pyramid" as viewed in Open3D (left), and Blender (right).
+            </p>
+        </div>
+        <div>
+            <img src="/assets/projects/es-clip-threed/defaultvo3d.png" width="512" height="256">
+            <p style="font-size: 14px; text-align: center; width: 512px; height: 64px;">
+                <i>[Figure 5]</i> Default Blender cube (left) vs Default .obj Open3D cube (right). Normal information showed as pink lines.
+            </p>
+        </div>
+    </div>
+
+    <div class="divider"></div>
 
     <h1 class="post-heading">Results</h1>
 

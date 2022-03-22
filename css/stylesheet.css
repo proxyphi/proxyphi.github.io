@@ -6,6 +6,8 @@
 
     --page-background-color: #191919;
 
+    --font-color: #ededed;
+
     --link-color: white;
     --link-hover-color: #bbbbbb;
     --link-visited-color: #999999;
@@ -25,8 +27,8 @@
 
 body {
     background-color: var(--page-background-color);
-    color: white;
-    text-align: center;
+    color: var(--font-color);
+    text-align: left;
     font-family: sans-serif;
     padding-left: 12.5%;
     padding-right: 12.5%;
@@ -107,6 +109,12 @@ p {
     font-size: 18px;
 }
 
+li {
+    margin-bottom: 1em;
+    font-size: 18px;
+    line-height: 1.6em;
+}
+
 blockquote {
     margin: 16px 30px 0 10px;
     padding-left: 20px;
@@ -155,6 +163,7 @@ blockquote {
 
 
 .header {
+    text-align: center;
     font-size: var(--header-font-size);
     font-family: serif;
     margin: 16px 0px;
