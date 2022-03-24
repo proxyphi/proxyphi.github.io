@@ -5,7 +5,7 @@ class SiteHeader extends HTMLElement {
 
     connectedCallback() {
         this.innerHTML = `
-        <div id="header-container">
+        <div class="header-container">
             <h1 class="header">
                 <a href="/index.html">φ</a>
             </h1>
@@ -13,11 +13,11 @@ class SiteHeader extends HTMLElement {
             <div class="navigator-container">
                 <p><a href="/pages/projects/index.html">Projects</a></p>
                 <p>__φ__</p>
-                <p><a href="/pages/writing/design.html">Writing</a></p>
+                <p><a href="/pages/nothing.html">Writing</a></p>
                 <p>__φ__</p>
-                <p><a href="/pages/media/index.html">Media</a></p>
+                <p><a href="/pages/nothing.html">Media</a></p>
                 <p>__φ__</p>
-                <p><a href="">Misc</a>⠀</p>
+                <p><a href="/pages/nothing.html">Misc</a>⠀</p>
                 <p>__φ__</p>
                 <p><a href="/pages/about.html">About</a>⠀⠀</p>
             </div>

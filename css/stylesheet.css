@@ -161,6 +161,13 @@ blockquote {
     align-items: center;
 }
 
+canvas {
+    z-index: -1;
+}
+
+.header-container {
+    background-color: var(--page-background-color);
+}
 
 .header {
     text-align: center;
